@@ -9,7 +9,7 @@ const connection = knex({
         host : process.env.DB_HOST,
         user : process.env.DB_USER,
         password : process.env.DB_PASSWD,
-        database : 'contas-a-pagar'
+        database : 'contas_a_pagar'
     }
 });
 

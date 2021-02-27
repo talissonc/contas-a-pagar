@@ -1,10 +1,11 @@
 version: '3.3'
 services:
-  db:
+  banco_dados:
     image: mysql:5.7
     restart: always
+    container_name: banco_dados
     environment:
-      MYSQL_DATABASE: 'contas-a-pagar'
+      MYSQL_DATABASE: 'contas_a_pagar'
       MYSQL_USER: 'master_admin'
       MYSQL_PASSWORD: 'AndreiToledo#2021@123'
       MYSQL_ROOT_PASSWORD: 'AndreiToledo#2021@123'
@@ -13,7 +14,23 @@ services:
     expose:
       - '3306'
     volumes:
-      - my-db:/var/lib/mysql
-# Names our volume
+      - db-volume:/var/lib/mysql
+  server_api:
+    build: 
+      context: .
+      dockerfile: ./server/Dockerfile
+    container_name: server_api
+    environment:
+      TZ: "America/Recife"
+      DB_HOST: "banco_dados"
+    ports:  
+      - "3001:3001"
+    expose:
+      - '3306'
+    volumes:
+      - ./server:/home/server
+    links:
+      - banco_dados
+    restart: always  
 volumes:
-  my-db:
+  db-volume:
