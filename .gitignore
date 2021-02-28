@@ -1,2 +1,6 @@
 
 server/yarn.lock
+
+front/public/env.js
+
+.DS_Store

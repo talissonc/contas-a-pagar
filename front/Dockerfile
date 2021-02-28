@@ -4,9 +4,7 @@ RUN mkdir -p /home/server
 
 WORKDIR /home/server 
 COPY ./server /home/server
-RUN rm -rf node_modules
-RUN rm yarn.lock
 RUN yarn 
 RUN echo "America/Recife" > /etc/timezone
 
-CMD ["sh","-c","yarn knex:migrate && yarn knex:seeds && yarn dev"]
+CMD ["yarn start"]
