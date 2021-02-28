@@ -6,7 +6,8 @@ REST API para um sistema de controle de contas a pagar.
 ### Requisitos
 As seguintes portas devem estar livres:
 - 3001 (API REST)
-- 3006 (Mysql)
+- 3006 (Banco de dados)
+- 3000 (Frontend)
 
 ### Usando o docker-compose
 **APENAS LINUX:** Se você utiliza Linux, primeiro siga esse tutorial: [Como instalar o Docker engine Linux](https://docs.docker.com/engine/install/#server)
@@ -20,8 +21,13 @@ docker-compose up
 ```
 
 ### Rodando a fora do compose
+
+**Banco de dados**
+
 Você deve ter um servidor mysql com um banco de dados 
 (database) chamado ```contas-a-pagar``` ou deve alterar o nome do banco no arquivo ```.env```.
+
+**Backend**
 
 Outro requisito é o ```NodeJS``` com o gerenciador de pactoes ```npm``` instalado no computador que irá rodar a aplicação
 
@@ -29,6 +35,21 @@ Após ter o banco de dados configurado, entre no diretório ```server``` e execu
 
 ```
 npm -i yarn -g && yarn && yarn knex:migrate && yarn knex:seeds && yarn dev
+```
+
+**Frontend**
+
+Assim como o **Backend**, o Front precisa do ```NodeJS``` e ```Yarn``` para funcionar. 
+
+Entre no diretório ```front``` e execute os seguintes comandos:
+
+Se você **não** rodou o backend:
+````
+npm -i yarn -g && yarn start
+````
+Se você rodou o backend:
+```
+yarn start```
 ```
 
 ## Documentação API
@@ -42,7 +63,7 @@ Content-type: application/json
 
 **GET**: ```/contas```
 
-Retorno: 
+Retorno ```200```: 
 ```
 {
     "id_conta": Number,
@@ -58,6 +79,16 @@ Retorno:
     "qtd_dias_final": Number
     "qtd_multa": Number,
     "qtd_juros": Number,
+    "tipo_juros": "simples" | "composto"
+}
+```
+
+Retorno ```204```
+
+Retorno ```503```:
+```
+{
+    "msg": "Falha na comunicação com o banco de dados. Tente novamente."
 }
 ```
 
@@ -69,15 +100,31 @@ Body:
     "nome_conta": String,
     "data_vencimento": Datetime,
     "data_pagamento": Datetime,
-    "valor_original": Number
+    "valor_original": Number,
+    "tipo_juros: "simples" | "composto"
 }
 ```
 
 Retorno ```200```:
 ```
 {
-    msg: 'Conta cadastrada com sucesso.',
-    id_conta: Number
+    "msg": "Conta cadastrada com sucesso.",
+    "id_conta": Number
+}
+```
+
+Retorno ```400```
+```
+{
+    "msg": "Erro ao cadastrar conta.",
+    "erorr": Error 
+}
+```
+
+Retorno ```503```:
+```
+{
+    "msg": "Falha na comunicação com o banco de dados. Tente novamente."
 }
 ```
 
@@ -85,6 +132,7 @@ Retorno ```200```:
 - NodeJS
 - Mysql
 - Docker
+- ReactJS
 
 ### Pacotes usados NodeJS (API-Backend)
 - Express
@@ -93,6 +141,13 @@ Retorno ```200```:
 - Knex
 - Mysql2
 - Typescript
+
+### Pacotes usados no ReactJS (Front-end)
+- Axios
+- React Bootstrap
+- Sweetalerts
+- MomentJS
+- React-dotenv
 
 ### Linguagem de programação
 - JavaScript (TypeScript)
@@ -115,6 +170,26 @@ server
     └── server.ts
   └── .env
   └── Dockerfile
+  └── package.json
+  └── tsconfig.json
+front
+  └── public
+  └── src
+    └── compontents
+      └── Contas
+        └── index.tsx
+      └── ModalCadastraConta
+        └── index.tsx
+    └── pages
+      └── index.tsx
+    └── services
+      └── api.tsx
+    └── App.tsx
+    └── index.css
+    └── index.tsx
+    └── routes.tsx
+  └── .env
+  └── DockerFile
   └── package.json
   └── tsconfig.json
 docker-compose.yml
