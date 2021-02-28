@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Button, Form, Col, Row, InputGroup } from 'react-bootstrap';
 import api from '../../services/api';
+import swal from 'sweetalert';
 
 interface IModal {
     showModal: boolean;
@@ -8,10 +9,11 @@ interface IModal {
 }
 
 interface IDadosConta {
-    nome_conta: string,
-    data_vencimento: string,
-    data_pagamento: string,
-    valor_original: number
+    nome_conta: string;
+    data_vencimento: string;
+    data_pagamento: string;
+    valor_original: number;
+    tipo_juros: string;
 }
 
 const ModalCadastraConta: React.FC<IModal> = ({showModal, setShowModal}) => {
@@ -24,13 +26,18 @@ const ModalCadastraConta: React.FC<IModal> = ({showModal, setShowModal}) => {
                 nome_conta: formDataObj.nome_conta.toString(),
                 data_vencimento: formDataObj.data_vencimento.toString(),
                 data_pagamento: formDataObj.data_pagamento.toString(),
-                valor_original: parseFloat(formDataObj.valor_original.toString())
+                valor_original: parseFloat(formDataObj.valor_original.toString()),
+                tipo_juros: formDataObj.tipo_juros.toString()
             }
             const conta = await api.post('/conta', dados, {
                 headers: { 'Content-Type': 'application/json' }
             });
-            setShowModal(false);
+            swal('Sucesso!', conta.data.msg, 'success').then( val => {
+                setShowModal(false);
+                return;
+            } )
         } catch (e) {
+            swal('Atenção', 'Verifique os campos preenchidos e tente novamente', 'warning');
             console.log(e);
         }
     }
@@ -68,16 +75,25 @@ const ModalCadastraConta: React.FC<IModal> = ({showModal, setShowModal}) => {
                         </Col>
                     </Row>
                     <Row>
-                        <Col sm={12} md={6}>
+                        <Col sm={12} md={4}>
                             <Form.Group controlId="formCadastroConta.data_vencimento">
                                 <Form.Label>Data de vencimento</Form.Label>
                                 <Form.Control name="data_vencimento" type="date" placeholder="dd/mm/aaaa" />
                             </Form.Group>
                         </Col>
-                        <Col sm={12} md={6}>
+                        <Col sm={12} md={4}>
                             <Form.Group controlId="formCadastroConta.data_pagamento">
                                 <Form.Label>Data de pagamento</Form.Label>
                                 <Form.Control name="data_pagamento" type="date" placeholder="dd/mm/aaaa" />
+                            </Form.Group>
+                        </Col>
+                        <Col sm={12} md={4}>
+                            <Form.Group controlId="formCadastroConta.tipo_juros">
+                                <Form.Label>Juros compostos?</Form.Label>
+                                <Form.Control as="select" name="tipo_juros" custom >
+                                    <option value="simples" selected>Não</option>
+                                    <option value="composto">Sim</option>
+                                </Form.Control>
                             </Form.Group>
                         </Col>
                     </Row>

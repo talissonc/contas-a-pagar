@@ -16,7 +16,7 @@ export async function showContas (req: Request, res: Response) {
 
 export async function createConta (req: Request, res: Response) {
     try {
-        const { nome_conta, valor_original, data_vencimento, data_pagamento } = req.body;
+        const { nome_conta, valor_original, data_vencimento, data_pagamento, tipo_juros } = req.body;
         const regras = await knex('regras_atraso').select('*');
         const diferenca_dias = moment(data_pagamento, 'YYYY-MM-DD').diff(moment(data_vencimento, 'YYYY-MM-DD'), 'days');
         let valor_final = valor_original;
@@ -26,9 +26,18 @@ export async function createConta (req: Request, res: Response) {
         });
 
         if(regra_applicada.length > 0){
-            valor_final += ((valor_original * regra_applicada[0].qtd_juros) / 100) * diferenca_dias;
-            valor_final += (valor_original * regra_applicada[0].qtd_multa) / 100;
-            valor_final = valor_final.toFixed(2);
+            switch (tipo_juros){
+                case 'composto':
+                    valor_final = valor_original * ( ( 1 + (regra_applicada[0].qtd_juros / 100 ) ) ^ diferenca_dias );
+                    valor_final += (valor_original * regra_applicada[0].qtd_multa) / 100;
+                    valor_final = valor_final.toFixed(2);
+                break;
+                default:
+                    valor_final += ( ( valor_original * regra_applicada[0].qtd_juros) / 100 ) * diferenca_dias;
+                    valor_final += ( valor_original * regra_applicada[0].qtd_multa ) / 100;
+                    valor_final = valor_final.toFixed(2);
+                break;
+            }
         }
 
         const id_regra = regra_applicada[0] ? regra_applicada[0].id_regra : undefined;

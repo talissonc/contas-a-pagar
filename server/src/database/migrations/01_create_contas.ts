@@ -10,6 +10,7 @@ export async function up(knex: Knex) {
         table.double('valor_final').notNullable();
         table.integer('diferenca_dias').notNullable();
         table.integer('id_regra', 10).unsigned().references('id_regra').inTable('regras_atraso');
+        table.enum('tipo_juros', ['simples', 'composto']).notNullable().defaultTo('simples');
     });
 }
 
