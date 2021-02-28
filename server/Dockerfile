@@ -4,8 +4,8 @@ RUN mkdir -p /home/server
 
 WORKDIR /home/server 
 COPY ./server /home/server
-RUN rm -rf node_modules
-RUN rm yarn.lock
+RUN if [ -d "node_modules" ]; then rm -Rf node_modules; fi
+RUN if [ -f "yarn.lock" ]; then rm yarn.lock; fi
 RUN yarn 
 RUN echo "America/Recife" > /etc/timezone
 
