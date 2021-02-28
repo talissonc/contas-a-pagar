@@ -45,7 +45,7 @@ services:
     expose:
       - '3000'
     volumes:
-      - ./front_end:/home/front_end
+      - ./front:/home/front
     links:
       - server_api
     restart: always
