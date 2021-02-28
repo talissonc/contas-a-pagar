@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Conta from '../../components/Conta';
 import api from '../../services/api';
 import ModalCadastraConta from '../../components/ModalCadastraConta';
+import Swal from 'sweetalert';
 
 interface IConta {
     nome_conta: string;
@@ -18,6 +19,7 @@ interface IConta {
     qtd_multa: number;
     nome_regra: string;
     diferenca_dias: number; 
+    tipo_juros: string;
 }
 
 const Contas: React.FC = () => {
@@ -25,8 +27,17 @@ const Contas: React.FC = () => {
     const [showModalCadConta, setShowModalCadConta] = useState<boolean>(false);
 
     const loadContas = async () => {
-        const response = await api.get('/contas');
-        setContas(response.data.contas);
+        try {
+            const response = await api.get('/contas');
+            setContas(response.data.contas);
+        } catch (e) {
+            // console.log(JSON.stringify(e));
+            if (e.message.indexOf('code 503') > -1){
+                Swal('😕', 'Banco de dados indisponível no momento', 'error').then( () => {
+                    loadContas();
+                });
+            } 
+        }
     }
     
     useEffect(( )=>{
@@ -63,10 +74,20 @@ const Contas: React.FC = () => {
                                     <th>Atraso</th>
                                     <th>Valor original</th>
                                     <th>Valor final</th>
+                                    <th>Tipo de juros</th>
                                     <th>Regra aplicada</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {
+                                        (!contas || contas.length < 1) && (
+                                            <tr>
+                                                <td colSpan={8}>
+                                                    <h3 className="text-warning text-center">Nenhuma conta cadastrada</h3>
+                                                </td>
+                                            </tr>
+                                        )
+                                    }
                                     {
                                         contas?.map( conta => (
                                             <Conta key={conta.id_conta} conta={conta}/>

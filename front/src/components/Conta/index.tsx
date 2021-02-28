@@ -12,6 +12,7 @@ interface IConta {
     qtd_multa: number;
     nome_regra: string;
     diferenca_dias: number; 
+    tipo_juros: string;
 }
 
 interface PorpsConta {
@@ -19,6 +20,11 @@ interface PorpsConta {
 }
 
 const Conta: React.FC<PorpsConta> = ({conta}) => {
+    
+    const capitalizeFirstLetter = (str:string) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     return (
         <tr>
             <td>{conta.nome_conta}</td>
@@ -31,6 +37,7 @@ const Conta: React.FC<PorpsConta> = ({conta}) => {
             }</td>
             <td>R$ {conta.valor_original.toFixed(2).replace('.',',')}</td>
             <td>R$ {conta.valor_final.toFixed(2).replace('.',',')}</td>
+            <td>{capitalizeFirstLetter(conta.tipo_juros)}</td>
             <td>{conta.diferenca_dias > 0 ? conta.nome_regra : Math.abs(conta.diferenca_dias) == 0 ? 'Conta paga em dia' : 'Conta paga adiantada'}</td>
         </tr>
     )
