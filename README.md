@@ -128,6 +128,17 @@ Retorno ```503```:
 }
 ```
 
+## Testes (REST API - Backend)
+
+Para rodar os testes, é necessário entrar no diretório ```server``` e rodar o seguinte comando:
+```
+yarn && yarn test
+```
+
+Os testes realizados são:
+- Juros Compostos
+- Juros Simples
+
 ## Tecnologias usadas
 - NodeJS
 - Mysql
@@ -141,6 +152,8 @@ Retorno ```503```:
 - Knex
 - Mysql2
 - Typescript
+- Jest
+- TS-Jest
 
 ### Pacotes usados no ReactJS (Front-end)
 - Axios
@@ -156,6 +169,8 @@ Retorno ```503```:
 ```
 server
   └── src
+    └── __tests__
+      └── regras.test.ts
     └── controllers
       └── index.ts
     └── database
