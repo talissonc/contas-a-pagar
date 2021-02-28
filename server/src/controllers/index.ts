@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import knex from '@database/connect';
+import knex from '../database/connect';
 import moment from 'moment';
 
 export async function showContas (req: Request, res: Response) {
@@ -34,15 +34,10 @@ export async function createConta (req: Request, res: Response) {
         if(regra_aplicada.length > 0){
             switch (tipo_juros){
                 case 'composto':
-                    valor_final = valor_original * ( Math.pow( 1 + ( regra_aplicada[0].qtd_juros / 100 ) , diferenca_dias ) );
-                    // console.log('difdias',diferenca_dias)
-                    valor_final += ( valor_original * regra_aplicada[0].qtd_multa ) / 100;
-                    valor_final = valor_final.toFixed(2);
+                    valor_final = calculaComposto(valor_original, regra_aplicada[0].qtd_juros, regra_aplicada[0].qtd_multa, diferenca_dias);
                 break;
                 default:
-                    valor_final += ( ( valor_original * regra_aplicada[0].qtd_juros) / 100 ) * diferenca_dias;
-                    valor_final += ( valor_original * regra_aplicada[0].qtd_multa ) / 100;
-                    valor_final = valor_final.toFixed(2);
+                    valor_final = calculaSimples(valor_original, regra_aplicada[0].qtd_juros, regra_aplicada[0].qtd_multa, diferenca_dias);
                 break;
             }
         }
@@ -77,4 +72,16 @@ export async function createConta (req: Request, res: Response) {
 
         return res.status(500).json({msg: 'Erro ao cadastrar conta.', error : e});
     }
+}
+
+export function calculaComposto(valor_original: number, qtd_juros: number, qtd_multa: number, diferenca_dias: number) {
+    let valor_final = valor_original * ( Math.pow( 1 + ( qtd_juros / 100 ) , diferenca_dias ) );
+    valor_final += ( valor_original * qtd_multa ) / 100;
+    return valor_final.toFixed(2);
+}
+
+export function calculaSimples(valor_original: number, qtd_juros: number, qtd_multa: number, diferenca_dias: number) {
+    let valor_final = valor_original + ( ( ( valor_original * qtd_juros) / 100 ) * diferenca_dias);
+    valor_final += ( valor_original * qtd_multa ) / 100;
+    return valor_final.toFixed(2);
 }
