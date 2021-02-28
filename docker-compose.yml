@@ -28,7 +28,7 @@ services:
     expose:
       - '3001'
     volumes:
-      - ./server:/home/server
+      - server-volume:/home/server
     links:
       - banco_dados
     restart: always
@@ -39,15 +39,17 @@ services:
     container_name: front_end
     environment:
       TZ: "America/Recife"
-      API_URL: "http://server_api:3001"
+      API_URL: "http://localhost:3001"
     ports:  
       - "3000:3000"
     expose:
       - '3000'
     volumes:
-      - ./front:/home/front
+      - front-volume:/home/front
     links:
       - server_api
     restart: always
 volumes:
   db-volume:
+  front-volume:
+  server-volume:
