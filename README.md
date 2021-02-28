@@ -52,6 +52,8 @@ Se você rodou o backend:
 yarn start```
 ```
 
+Para acessar o frontend, utilize o endereço [http://localhost:3000](http://localhost:3000)
+
 ## Documentação API
 
 URL padrão: ```http://localhost:3001```
